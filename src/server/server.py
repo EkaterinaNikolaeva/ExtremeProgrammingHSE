@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask import jsonify
 from flask_login import LoginManager, login_user, login_required, current_user
 
-from src.db.models import User
+from src.db.models import User, Homework
 
 app = Flask(__name__)
 storage = {}
@@ -28,6 +28,14 @@ def handle_exception(err):
     }
     return jsonify(response), err.status_code
 
+
+@app.route('/submitted_works')
+@login_required
+def submitted_works():
+    if current_user.role == 'teacher':
+        raise RequestException(403, "Submitted works are available only for students")
+    homeworks = Homework.query.filter_by(student_id=current_user.user_id).all()
+    return render_template('submitted_works.html', homeworks=homeworks)
 
 
 def run_server(config, port=9001):
