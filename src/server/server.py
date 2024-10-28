@@ -26,6 +26,6 @@ def handle_exception(err):
     }
     return jsonify(response), err.status_code
 
-
+    
 def run_server(config, port=9001):
     app.run(port=port, debug=False)
