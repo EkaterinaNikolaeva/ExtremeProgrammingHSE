@@ -1,8 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask import jsonify
 from flask_login import LoginManager, login_user, login_required, current_user
-from config.config import Config
-from db.models import User, db, Homework
+from src.config.config import Config
+from src.db.models import User, db, Homework
 
 app = Flask(__name__)
 app.config.from_object(Config)
