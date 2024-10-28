@@ -25,7 +25,6 @@ class Homework(db.Model):
     feedback = db.Column(db.Text, nullable=True)
     student = db.relationship('User', backref='homeworks')
 
-
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -36,3 +35,8 @@ class HomeworkForm(FlaskForm):
     subject = StringField("Предмет", validators=[DataRequired()])
     file = FileField("Прикрепить файл", validators=[FileAllowed(['pdf', 'docx', 'jpg', 'png'], "Только PDF, DOCX, JPG, PNG")])
     submit = SubmitField("Отправить")
+    
+class Teacher(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    subject = db.Column(db.String(150), nullable=False)
