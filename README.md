@@ -34,7 +34,7 @@ Web-Приложение для сбора и проверки домашних 
 
 4. API: 
 
-'GET', 'POST' `/login`
+GET, POST `/login`
 
 POST `/review`
 
