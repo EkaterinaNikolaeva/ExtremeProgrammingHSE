@@ -5,9 +5,8 @@ from flask import jsonify
 from flask_login import LoginManager, login_user, login_required, current_user
 from werkzeug.utils import secure_filename
 
-from config.config import Config
-from db.models import User, db, Homework, HomeworkForm, Student, Teacher
-from config.config import Config
+from src.config.config import Config
+from src.db.models import User, db, Homework, HomeworkForm, Student, Teacher
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -77,11 +76,17 @@ def get_unreviewed():
         all_homeworks += homeworks
     return render_template('unreviewed.html', homeworks=all_homeworks)
 
-@app.route('/review', methods=['POST'])
+@app.route('/review', methods=['POST', 'GET'])
 def review():
     if current_user.role != 'teacher':
         raise RequestException(403, "Reviewing works are available only for teachers")
-    hw_id = request.args.get('hw_id')
+    try:
+        if request.method == 'GET':
+            hw_id = request.args['hw_id']
+        else:
+            hw_id = request.form['hw_id']
+    except:
+        raise RequestException(403, "hw id is required")
     hw = Homework.query.filter_by(id=hw_id).first()
     return render_template('review.html', file=hw.file_path)
 
