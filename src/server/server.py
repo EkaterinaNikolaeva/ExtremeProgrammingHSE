@@ -1,6 +1,8 @@
-from flask import Flask, jsonify, request
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from ..db.models import User, Student, Teacher
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import jsonify
+from flask_login import LoginManager, login_user, login_required, current_user
+
+from src.db.models import User
 
 app = Flask(__name__)
 storage = {}
@@ -30,3 +32,32 @@ def handle_exception(err):
 
 def run_server(config, port=9001):
     app.run(port=port, debug=False)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        password = request.form.get('password')
+
+        # TODO check with DB
+        if user_id == "admin" and password == "password":
+            user = User(user_id)
+            login_user(user)
+            flash("Успешный вход!", "success")
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('protected'))
+        else:
+            flash("Неверный логин или пароль.", "danger")
+    return render_template('login.html')
+
+
+@app.route('/protected')
+@login_required
+def protected():
+    return f'Привет, {current_user.id}!'
+
+@app.route('/')
+def home():
+    return redirect(url_for('login'))
+
