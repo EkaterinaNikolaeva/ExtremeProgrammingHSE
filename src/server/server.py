@@ -6,7 +6,8 @@ from flask_login import LoginManager, login_user, login_required, current_user
 from werkzeug.utils import secure_filename
 
 from src.config.config import Config
-from src.db.models import User, db, Homework, HomeworkForm, Student
+from src.db.models import User, db, Homework, HomeworkForm, Student, Teacher
+from config.config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -53,8 +54,9 @@ def run_server(port=9001):
 def login():
     if request.method == 'POST':
         login = request.form.get('user_id')
+        password = request.form.get('password')
         user = User.query.filter_by(username=login).first()
-        if user is None:
+        if user is None or user.password != password:
             flash("Неверный логин или пароль.", "danger")
             raise RequestException(401, "Incorrect login and password")
         login_user(user)
@@ -62,6 +64,26 @@ def login():
         next_page = request.args.get('next')
         return redirect(next_page or url_for('protected'))
     return render_template('login.html')
+
+@app.route('/unreviewed', methods=['GET'])
+def get_unreviewed():
+    if current_user.role != 'teacher':
+        raise RequestException(403, "Reviewing works are available only for teachers")
+    subjects = Teacher.query.filter_by(user_id=current_user.id).all()
+    print(subjects)
+    all_homeworks = []
+    for teacher in subjects:
+        homeworks = Homework.query.filter_by(subject=teacher.subject, grade=None).all()
+        all_homeworks += homeworks
+    return render_template('unreviewed.html', homeworks=all_homeworks)
+
+@app.route('/review', methods=['POST'])
+def review():
+    if current_user.role != 'teacher':
+        raise RequestException(403, "Reviewing works are available only for teachers")
+    hw_id = request.args.get('hw_id')
+    hw = Homework.query.filter_by(id=hw_id).first()
+    return render_template('review.html', file=hw.file_path)
 
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
