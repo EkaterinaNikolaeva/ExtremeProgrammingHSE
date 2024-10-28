@@ -5,8 +5,8 @@ from flask import jsonify
 from flask_login import LoginManager, login_user, login_required, current_user
 from werkzeug.utils import secure_filename
 
-from src.config.config import Config
-from src.db.models import User, db, Homework, HomeworkForm, Student, Teacher
+from config.config import Config
+from db.models import User, db, Homework, HomeworkForm, Student, Teacher
 from config.config import Config
 
 app = Flask(__name__)
