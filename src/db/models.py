@@ -33,7 +33,7 @@ class Student(db.Model):
 class HomeworkForm(FlaskForm):
     title = StringField("Заголовок задания", validators=[DataRequired()])
     subject = StringField("Предмет", validators=[DataRequired()])
-    file = FileField("Прикрепить файл", validators=[FileAllowed(['pdf', 'docx', 'jpg', 'png'], "Только PDF, DOCX, JPG, PNG")])
+    file = FileField("Прикрепить файл", validators=[FileAllowed(['pdf', 'docx', 'jpg', 'png', 'txt'], "Только PDF, DOCX, JPG, PNG, TXT"),])
     submit = SubmitField("Отправить")
     
 class Teacher(db.Model):
