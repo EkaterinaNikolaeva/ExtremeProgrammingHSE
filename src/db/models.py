@@ -1,34 +1,20 @@
-import sqlalchemy
-from .connection import SqlAlchemyBase
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
+db = SQLAlchemy()
 
-class User(SqlAlchemyBase):
-    __tablename__ = "Users"
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    login = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    role = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    role = db.Column(db.String(50), nullable=False)  # 'student' или 'teacher'
 
-class Student(SqlAlchemyBase):
-    __tablename__ = "Students"
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey(User.user_id), autoincrement=True)
-    group = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-
-class Teacher(SqlAlchemyBase):
-    __tablename__ = "Teachers"
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey(User.user_id), autoincrement=True)
-    subject = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    group = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-
-class Homework(SqlAlchemyBase):
-    __tablename__ = "Homeworks"
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    file_path = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    student_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey(User.user_id))
-    grade = sqlalchemy.Column(sqlalchemy.REAL, nullable=True)
-    feedback = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
-    # student = sqlalchemy.relationship('User', backref='homeworks')
+class Homework(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    subject = db.Column(db.String(150), nullable=False)
+    file_path = db.Column(db.String(200), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    grade = db.Column(db.Float, nullable=True)
+    feedback = db.Column(db.Text, nullable=True)
+    student = db.relationship('User', backref='homeworks')

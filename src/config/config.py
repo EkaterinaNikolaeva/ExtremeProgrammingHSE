@@ -1,6 +1,7 @@
 import os
 
 class Config:
-    def __init__(self, database_file, upload_folder):
-        self.database_file = database_file
-        self.upload_folder = upload_folder
+    SECRET_KEY = 'your_secret_key'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///homeworks.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    UPLOAD_FOLDER = 'uploads/'
