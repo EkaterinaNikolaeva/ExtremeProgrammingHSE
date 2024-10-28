@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head><title>Submitted works</title></head>
+<body>
+    <h2>Submitted works</h2>
+    {% for hw in homeworks %}
+        <li>
+            {{hw.subject}} - {{ hw.title }} - {{ hw.grade or 'Not graded' }} - {{ hw.feedback or 'No feedback'}}
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
